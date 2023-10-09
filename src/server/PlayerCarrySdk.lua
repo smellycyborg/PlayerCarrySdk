@@ -4,6 +4,8 @@ local StarterPlayer = game:GetService("StarterPlayer")
 
 local PLAYER_LEFT_THE_GAME_MESSAGE = "The player requested to carry has left the game."
 
+local isTesting = true
+
 local PlayerCarrySdk = {
 	pendingRequests = {},
 	playersActive = {},
@@ -84,6 +86,11 @@ local function _getInfoForRemoving(player, arrey)
 end
 
 local function playerAdded(player)
+	if isTesting then
+		local testUi = script.Parent.TestUi
+		testUi.Parent = player:WaitForChild("PlayerGui")
+	end
+	
 	PlayerCarrySdk.statePerPlayer[player] = "NONE"
 end
 
@@ -180,7 +187,6 @@ local function onResponseToCarry(playerToCarry, response, carryType)
 end
 
 function PlayerCarrySdk.init()
-	
 	-- parenting client scripts
 	local ClientScripts = script.Parent.ClientScripts
 	ClientScripts.Parent = StarterPlayer.StarterPlayerScripts
