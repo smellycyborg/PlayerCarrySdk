@@ -9,6 +9,7 @@ local carryRequested = RemoteEvents:WaitForChild("CarryRequested")
 local responseToCarry = RemoteEvents:WaitForChild("ResponseToCarry")
 
 local TEST_RESPONSE = true
+local TEST_CARRY = "SHOULDERS"
 
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -34,7 +35,7 @@ task.spawn(function()
 				carryButton.Parent = scrollingFrame
 
 				carryButton.Activated:Connect(function()
-					carrySignal:Fire(plr.Name, "SHOULDERS")
+					carrySignal:Fire(plr.Name, TEST_CARRY)
 				end)
 			end
 		end

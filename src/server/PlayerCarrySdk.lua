@@ -145,19 +145,19 @@ local function onCarryRequest(playerCarrying, playerToCarryName, carryType)
 	table.insert(PlayerCarrySdk.pendingRequests, {
 		playerCarrying = playerCarrying,
 		playerToCarry = playerToCarry,
+		carryType = carryType
 	})
 	
 	carryRequested:FireClient(playerToCarry, {
 		playerCarryingName = playerCarrying.Name,
+		carryType = carryType,
 		carryingTypeName = carryTypes[carryType].name,
 	})
 	
 	print("CarryRequest:  completed.")
 end
 
-local function onResponseToCarry(playerToCarry, response, carryType)
-	warn(response)
-	
+local function onResponseToCarry(playerToCarry, response, _carryType)
 	if PlayerCarrySdk.statePerPlayer[playerToCarry] == "REQUESTING" then
 		return warn("ResponseToCarry:  player's state is already requesting.")
 	end
@@ -172,7 +172,7 @@ local function onResponseToCarry(playerToCarry, response, carryType)
 				table.remove(PlayerCarrySdk.pendingRequests, index)
 				table.insert(PlayerCarrySdk.playersActive, players)
 				
-				_carry(players.playerCarrying, players.playerToCarry, carryType)
+				_carry(players.playerCarrying, players.playerToCarry, players.carryType)
 				
 				print("CarryResponse:  called _carry()")
 			end
@@ -196,6 +196,8 @@ function PlayerCarrySdk.init()
 	remoteEvents.Name = "RemoteEvents"
 	local bindableEvents = Instance.new("Folder", ReplicatedStorage)
 	bindableEvents.Name = "BindableEvents"
+	local bindableFunctions = Instance.new("Folder", ReplicatedStorage)
+	bindableFunctions.Name = "BindableFunctions"
 	
 	-- remote events
 	local carryRequest = Instance.new("RemoteEvent", remoteEvents)
@@ -212,6 +214,10 @@ function PlayerCarrySdk.init()
 	carrySignal.Name = "CarrySignal"
 	local requestSignal = Instance.new("BindableEvent", bindableEvents)
 	requestSignal.Name = "RequestSignal"
+
+	-- bindable functons
+	local respondToCarry = Instance.new("BindableFunction", bindableFunctions)
+	respondToCarry.Name = "RespondToCarry"
 	
 	-- bindings
 	Players.PlayerAdded:Connect(playerAdded)

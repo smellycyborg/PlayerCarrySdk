@@ -4,21 +4,24 @@ local StarterGui = game:GetService("StarterGui")
 
 local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
 local BindableEvents = ReplicatedStorage:WaitForChild("BindableEvents")
+local BindableFunctions = ReplicatedStorage:WaitForChild("BindableFunctions")
 
 local carryRequest = RemoteEvents:WaitForChild("CarryRequest")
 local carryRequested = RemoteEvents:WaitForChild("CarryRequested")
 local carryResponse = RemoteEvents:WaitForChild("CarryResponse")
 local carrySignal = BindableEvents:WaitForChild("CarrySignal")
-local requestSignal = BindableEvents:WaitForChild("RequestSignal")
+local respondToCarry = BindableFunctions:WaitForChild("RespondToCarry")
+local responseToCarry = RemoteEvents:WaitForChild("ResponseToCarry")
 
 local isTesting = true
 
-local function onCarryRequested(args)
-	StarterGui:SetCore("SendNotification")
+local function onRespondToCarry(buttonText)
+	local response = buttonText == "Yes"
+	responseToCarry:FireServer(response)
 end
 
 local function onCarryResponse()
-	
+
 end
 
 local function onCarrySignal(playerToCarryName, carryType)
@@ -27,6 +30,6 @@ local function onCarrySignal(playerToCarryName, carryType)
 	carryRequest:FireServer(playerToCarryName, carryType)
 end
 
-carryRequested.OnClientEvent:Connect(onCarryRequested)
 carryResponse.OnClientEvent:Connect(onCarryResponse)
 carrySignal.Event:Connect(onCarrySignal)
+respondToCarry.OnInvoke = onRespondToCarry
