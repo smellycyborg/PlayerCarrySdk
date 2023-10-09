@@ -2,11 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local BindableEvents = ReplicatedStorage:WaitForChild("BindableEvents")
-local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
 
 local carrySignal = BindableEvents:WaitForChild("CarrySignal")
-local carryRequested = RemoteEvents:WaitForChild("CarryRequested")
-local responseToCarry = RemoteEvents:WaitForChild("ResponseToCarry")
 
 local TEST_RESPONSE = true
 local TEST_CARRY = "SHOULDERS"
@@ -41,19 +38,3 @@ task.spawn(function()
 		end
 	end
 end)
-
-print("PlayerCarryLocal:  completed.")
-
--- carryRequested.OnClientEvent:Connect(function(args)
--- 	local approveButton = Instance.new("TextButton")
--- 	approveButton.Name = "ApproveButton"
--- 	approveButton.AnchorPoint = Vector2.new(0.5, 0)
--- 	approveButton.Position = UDim2.fromScale(0.5, 0)
--- 	approveButton.Size = UDim2.fromScale(1, 0.2)
--- 	approveButton.Text = "Approve " .. args.playerCarryingName
--- 	approveButton.Parent = TestUi
-
--- 	approveButton.Activated:Connect(function()
--- 		responseToCarry:FireServer(TEST_RESPONSE, "SHOULDERS")
--- 	end)
--- end)

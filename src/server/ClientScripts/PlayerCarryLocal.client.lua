@@ -13,8 +13,6 @@ local carrySignal = BindableEvents:WaitForChild("CarrySignal")
 local respondToCarry = BindableFunctions:WaitForChild("RespondToCarry")
 local responseToCarry = RemoteEvents:WaitForChild("ResponseToCarry")
 
-local isTesting = true
-
 local function onRespondToCarry(buttonText)
 	local response = buttonText == "Yes"
 	responseToCarry:FireServer(response)
