@@ -1,1 +1,2 @@
-print("Hello world, from server!")
+local Sdk = require(script.PlayerCarrySdk)
+Sdk.init()

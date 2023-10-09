@@ -41,16 +41,18 @@ task.spawn(function()
 	end
 end)
 
-carryRequested.OnClientEvent:Connect(function(args)
-	local approveButton = Instance.new("TextButton")
-	approveButton.Name = "ApproveButton"
-	approveButton.AnchorPoint = Vector2.new(0.5, 0)
-	approveButton.Position = UDim2.fromScale(0.5, 0)
-	approveButton.Size = UDim2.fromScale(1, 0.2)
-	approveButton.Text = "Approve " .. args.playerCarryingName
-	approveButton.Parent = TestUi
+print("PlayerCarryLocal:  completed.")
 
-	approveButton.Activated:Connect(function()
-		responseToCarry:FireServer(TEST_RESPONSE, "SHOULDERS")
-	end)
-end)
+-- carryRequested.OnClientEvent:Connect(function(args)
+-- 	local approveButton = Instance.new("TextButton")
+-- 	approveButton.Name = "ApproveButton"
+-- 	approveButton.AnchorPoint = Vector2.new(0.5, 0)
+-- 	approveButton.Position = UDim2.fromScale(0.5, 0)
+-- 	approveButton.Size = UDim2.fromScale(1, 0.2)
+-- 	approveButton.Text = "Approve " .. args.playerCarryingName
+-- 	approveButton.Parent = TestUi
+
+-- 	approveButton.Activated:Connect(function()
+-- 		responseToCarry:FireServer(TEST_RESPONSE, "SHOULDERS")
+-- 	end)
+-- end)

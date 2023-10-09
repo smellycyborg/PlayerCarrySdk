@@ -87,10 +87,10 @@ end
 
 local function playerAdded(player)
 	if isTesting then
-		local testUi = script.Parent.TestUi
-		testUi.Parent = player:WaitForChild("PlayerGui")
+		local testUiClone = script.Parent.TestUi:Clone()
+		testUiClone.Parent = player:WaitForChild("PlayerGui")
 	end
-	
+
 	PlayerCarrySdk.statePerPlayer[player] = "NONE"
 end
 
@@ -214,6 +214,7 @@ function PlayerCarrySdk.init()
 	requestSignal.Name = "RequestSignal"
 	
 	-- bindings
+	Players.PlayerAdded:Connect(playerAdded)
 	Players.PlayerRemoving:Connect(playerRemoving)
 	carryRequest.OnServerEvent:Connect(onCarryRequest)
 	responseToCarry.OnServerEvent:Connect(onResponseToCarry)
