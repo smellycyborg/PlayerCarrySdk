@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 
 local PLAYER_LEFT_THE_GAME_MESSAGE = "The player requested to carry has left the game."
+local STOPPING = true
 
 local isTesting = true
 
@@ -24,6 +25,7 @@ local carryTypes = {
 				CFrame.fromEulerAnglesXYZ(math.pi / 2, 0, 0)
 			
 			local weld = Instance.new("Weld")
+			weld.Name = "CarryWeld"
 			weld.Part0 = playerToCarry.Character.HumanoidRootPart
 			weld.Part1 = playerCarrying.Character.HumanoidRootPart
 			weld.Parent = playerToCarry.Character
@@ -85,6 +87,22 @@ local function _getInfoForRemoving(player, arrey)
 	return foundPlayer, otherPlayer, isCarrier
 end
 
+local function characterRemoving(character)
+	local player = Players:GetPlayerFromCharacter(character)
+
+	for index, players in PlayerCarrySdk.pendingRequests do
+		for _, plr in players do
+			if plr == player then
+				players.playerToCarry.Character:FindFirstChild("CarryWeld"):Destroy()
+				table.remove(PlayerCarrySdk.playersActive, index)
+
+				updateAnimation:Fire(players.playerToCarry, players.carryType, STOPPING)
+				updateAnimation:Fire(players.playerCarrying, players.carryType, STOPPING)
+			end
+		end
+	end
+end
+
 local function playerAdded(player)
 	if isTesting then
 		local testUiClone = script.Parent.TestUi:Clone()
@@ -92,6 +110,8 @@ local function playerAdded(player)
 	end
 
 	PlayerCarrySdk.statePerPlayer[player] = "NONE"
+
+	player.CharacterRemoving:Connect(characterRemoving)
 end
 
 local function playerRemoving(player)
@@ -125,6 +145,15 @@ local function playerRemoving(player)
 end
 
 local function onCarryRequest(playerCarrying, playerToCarryName, carryType)
+	-- defense so the player cannot request again
+	for _, players in PlayerCarrySdk.pendingRequests do
+		for _, player in players do
+			if player == playerCarrying then
+				return
+			end
+		end
+	end
+
 	local playerToCarry
 	for _, player in Players:GetPlayers() do
 		if player.Name == playerToCarryName then
@@ -158,11 +187,11 @@ local function onCarryRequest(playerCarrying, playerToCarryName, carryType)
 end
 
 local function onResponseToCarry(playerToCarry, response, _carryType)
-	if PlayerCarrySdk.statePerPlayer[playerToCarry] == "REQUESTING" then
-		return warn("ResponseToCarry:  player's state is already requesting.")
+	if PlayerCarrySdk.statePerPlayer[playerToCarry] == "RESPONDING" then
+		return warn("ResponseToCarry:  player's state is already responding.")
 	end
 	
-	PlayerCarrySdk.statePerPlayer[playerToCarry] = "REQUESTING"
+	PlayerCarrySdk.statePerPlayer[playerToCarry] = "RESPONDING"
 	
 	for index, players in PlayerCarrySdk.pendingRequests do
 		if players.playerToCarry == playerToCarry then
@@ -178,10 +207,35 @@ local function onResponseToCarry(playerToCarry, response, _carryType)
 			end
 			
 			carryResponse:FireClient(players.playerCarrying, response)
+
+			PlayerCarrySdk.statePerPlayer[playerToCarry] = "NONE"
 			
 			print("CarryResponse:  completed.")
 			
 			return
+		end
+	end
+end
+
+local function onStopCarry(player)
+	if PlayerCarrySdk.statePerPlayer[player] == "STOPPING" then
+		return warn("ResponseToCarry:  player's state is already stopping.")
+	end
+
+	PlayerCarrySdk.statePerPlayer[player] = "STOPPING"
+
+	for index, players in PlayerCarrySdk.playersActive do
+		-- loop through players and find the matching table of players that are active
+		for key, value in players do
+			if value == player then
+				players.playerToCarry.Character:FindFirstChild("CarryWeld"):Destroy()
+				table.remove(PlayerCarrySdk.playersActive, index)
+
+				PlayerCarrySdk.statePerPlayer[player] = "NONE"
+
+				updateAnimation:Fire(players.playerToCarry, players.carryType, STOPPING)
+				updateAnimation:Fire(players.playerCarrying, players.carryType, STOPPING)
+			end
 		end
 	end
 end
@@ -208,6 +262,10 @@ function PlayerCarrySdk.init()
 	carryResponse.Name = "CarryResponse"
 	local responseToCarry = Instance.new("RemoteEvent", remoteEvents)
 	responseToCarry.Name = "ResponseToCarry"
+	local stopCarry = Instance.new("RemoteEvent", remoteEvents)
+	stopCarry.Name = "StopCarry"
+	updateAnimation = Instance.new("RemoteEvent", remoteEvents)
+	updateAnimation.Name = "UpdateAnimation"
 	
 	-- bindable events
 	local carrySignal = Instance.new("BindableEvent", bindableEvents)
@@ -224,6 +282,7 @@ function PlayerCarrySdk.init()
 	Players.PlayerRemoving:Connect(playerRemoving)
 	carryRequest.OnServerEvent:Connect(onCarryRequest)
 	responseToCarry.OnServerEvent:Connect(onResponseToCarry)
+	stopCarry.OnServerEvent:Connect(onStopCarry)
 	
 end
 
