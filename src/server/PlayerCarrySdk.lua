@@ -13,24 +13,30 @@ local PlayerCarrySdk = {
 	statePerPlayer = {},
 }
 
+local function _activateCarry(playerCarrying, playerToCarry, cFrame)
+	local humanoidToCarry = playerToCarry.Character:FindFirstChild("Humanoid")
+	humanoidToCarry.PlatformStand = true
+	
+	playerToCarry.Character.HumanoidRootPart.CFrame = cFrame
+	
+	local weld = Instance.new("Weld")
+	weld.Name = "CarryWeld"
+	weld.Part0 = playerToCarry.Character.HumanoidRootPart
+	weld.Part1 = playerCarrying.Character.HumanoidRootPart
+	weld.Parent = playerToCarry.Character
+	
+	playerCarrying.Character.HumanoidRootPart:SetNetworkOwner(playerCarrying)
+end
+
 local carryTypes = {
 	SHOULDERS = {
 		name = "Shoulder Carry",
 		callback = function(playerCarrying, playerToCarry)
-			local humanoidToCarry = playerToCarry.Character:FindFirstChild("Humanoid")
-			humanoidToCarry.PlatformStand = true
-			
-			playerToCarry.Character.HumanoidRootPart.CFrame = playerCarrying.Character.HumanoidRootPart.CFrame * 
-				CFrame.new(1, 1, 0) *
-				CFrame.fromEulerAnglesXYZ(math.pi / 2, 0, 0)
-			
-			local weld = Instance.new("Weld")
-			weld.Name = "CarryWeld"
-			weld.Part0 = playerToCarry.Character.HumanoidRootPart
-			weld.Part1 = playerCarrying.Character.HumanoidRootPart
-			weld.Parent = playerToCarry.Character
-			
-			playerCarrying.Character.HumanoidRootPart:SetNetworkOwner(playerCarrying)
+			local cFrame = playerCarrying.Character.HumanoidRootPart.CFrame * 
+			CFrame.new(1, 1, 0) *
+			CFrame.fromEulerAnglesXYZ(math.pi / 2, 0, 0)
+
+			_activateCarry(playerCarrying, playerToCarry, cFrame)
 		end,
 	},
 	BACK = {

@@ -10,7 +10,6 @@ local BindableEvents = ReplicatedStorage:WaitForChild("BindableEvents")
 local BindableFunctions = ReplicatedStorage:WaitForChild("BindableFunctions")
 
 local carryRequest = RemoteEvents:WaitForChild("CarryRequest")
-local carryRequested = RemoteEvents:WaitForChild("CarryRequested")
 local carryResponse = RemoteEvents:WaitForChild("CarryResponse")
 local responseToCarry = RemoteEvents:WaitForChild("ResponseToCarry")
 local updateAnimation = RemoteEvents:WaitForChild("UpdateAnimation")
