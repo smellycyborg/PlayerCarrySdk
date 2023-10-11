@@ -34,17 +34,17 @@ function animationPrototype:setTrack(player: Player)
 	
 	local character = player.Character
 	if not character then
-		return
+		return warn("AnimationClass:  attempt to index nil with character.")
 	end
 	
 	local humanoid = character:FindFirstChild("Humanoid")
 	if not humanoid then
-		return
+		return warn("AnimationClass:  attempt to index nil with humanoid.")
 	end
 	
 	local animator = humanoid:FindFirstChild("Animator")
 	if not animator then
-		return
+		return warn("AnimationClass:  attempt to index nil with animator.")
 	end
 	
 	if table.find(private.playersPlaying, player) then
@@ -59,6 +59,8 @@ function animationPrototype:setTrack(player: Player)
 	track.Ended:Connect(trackEnded)
 	
 	private.tracks[player] = track
+
+	print("AnimationClass:  setTrack completed.")
 end
 
 function animationPrototype:play(player: Player, isLooped: boolean)

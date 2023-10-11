@@ -42,17 +42,26 @@ local carryTypes = {
 	BACK = {
 		name = "Back Carry",
 		callback = function(playerCarrying, playerToCarry)
+			local cFrame = playerCarrying.Character.HumanoidRootPart.CFrame * 
+			CFrame.new(1, 1, 0) *
+			CFrame.fromEulerAnglesXYZ(math.pi / 2, 0, 0)
 
+			_activateCarry(playerCarrying, playerToCarry, cFrame)
 		end,
 	},
 	HAND = {
 		name = "Hand Carry",
 		callback = function(playerCarrying, playerToCarry)
+			local cFrame = playerCarrying.Character.HumanoidRootPart.CFrame * 
+			CFrame.new(1, 1, 0) *
+			CFrame.fromEulerAnglesXYZ(math.pi / 2, 0, 0)
 
+			_activateCarry(playerCarrying, playerToCarry, cFrame)
 		end,
 	}
 }
 
+-- checks to see if player's character exists
 local function _doesPlayerExist(player)
 	local character = player.Character
 	if not player.Character 
@@ -100,10 +109,11 @@ local function characterRemoving(character)
 		for _, plr in players do
 			if plr == player then
 				players.playerToCarry.Character:FindFirstChild("CarryWeld"):Destroy()
-				table.remove(PlayerCarrySdk.playersActive, index)
 
-				updateAnimation:Fire(players.playerToCarry, players.carryType, STOPPING)
-				updateAnimation:Fire(players.playerCarrying, players.carryType, STOPPING)
+				updateAnimation:FireClient(players.playerToCarry, players.carryType, players.playerCarrying.Name, STOPPING)
+				updateAnimation:FireClient(players.playerCarrying, players.carryType, players.playerCarrying.Name, STOPPING)
+
+				table.remove(PlayerCarrySdk.playersActive, index)
 			end
 		end
 	end
@@ -204,15 +214,18 @@ local function onResponseToCarry(playerToCarry, response, _carryType)
 			if not response then
 				table.remove(PlayerCarrySdk.pendingRequests, index)
 			elseif response == true then
-				table.remove(PlayerCarrySdk.pendingRequests, index)
-				table.insert(PlayerCarrySdk.playersActive, players)
+				carryResponse:FireClient(players.playerCarrying, response)
 				
 				_carry(players.playerCarrying, players.playerToCarry, players.carryType)
+
+				updateAnimation:FireClient(players.playerToCarry, players.carryType, players.playerCarrying.Name)
+				updateAnimation:FireClient(players.playerCarrying, players.carryType, players.playerCarrying.Name)
+
+				table.insert(PlayerCarrySdk.playersActive, players)
+				table.remove(PlayerCarrySdk.pendingRequests, index)
 				
 				print("CarryResponse:  called _carry()")
 			end
-			
-			carryResponse:FireClient(players.playerCarrying, response)
 
 			PlayerCarrySdk.statePerPlayer[playerToCarry] = "NONE"
 			
@@ -235,12 +248,13 @@ local function onStopCarry(player)
 		for key, value in players do
 			if value == player then
 				players.playerToCarry.Character:FindFirstChild("CarryWeld"):Destroy()
+
+				updateAnimation:FireClient(players.playerToCarry, players.carryType, players.playerCarrying.Name, STOPPING)
+				updateAnimation:FireClient(players.playerCarrying, players.carryType, players.playerCarrying.Name, STOPPING)
+
 				table.remove(PlayerCarrySdk.playersActive, index)
 
 				PlayerCarrySdk.statePerPlayer[player] = "NONE"
-
-				updateAnimation:Fire(players.playerToCarry, players.carryType, STOPPING)
-				updateAnimation:Fire(players.playerCarrying, players.carryType, STOPPING)
 			end
 		end
 	end

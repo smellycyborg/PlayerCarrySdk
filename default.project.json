@@ -13,7 +13,7 @@
     },
 
     "ServerScriptService": {
-      "Server": {
+      "initPlayerCarry": {
         "$path": "src/server"
       }
     },
