@@ -13,6 +13,11 @@ local playerGui = player:WaitForChild("PlayerGui")
 local TestUi = playerGui:WaitForChild("TestUi")
 local scrollingFrame = TestUi:WaitForChild("ScrollingFrame")
 
+local notNeeded = true
+if notNeeded then
+	return
+end
+
 task.spawn(function()
 	while task.wait(5) do
 		print("PlayerAdded:  local script.")

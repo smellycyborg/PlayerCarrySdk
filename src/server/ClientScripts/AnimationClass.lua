@@ -32,17 +32,17 @@ function animationPrototype:setTrack(player: Player)
 	
 	local private = animationPrivate[self]
 	
-	local character = player.Character
+	local character = player.Character or player.CharacterAdded:Wait()
 	if not character then
 		return warn("AnimationClass:  attempt to index nil with character.")
 	end
 	
-	local humanoid = character:FindFirstChild("Humanoid")
+	local humanoid = character:FindFirstChild("Humanoid") or character:WaitForChild("Humanoid")
 	if not humanoid then
 		return warn("AnimationClass:  attempt to index nil with humanoid.")
 	end
 	
-	local animator = humanoid:FindFirstChild("Animator")
+	local animator = humanoid:FindFirstChild("Animator") or humanoid:WaitForChild("Animator")
 	if not animator then
 		return warn("AnimationClass:  attempt to index nil with animator.")
 	end

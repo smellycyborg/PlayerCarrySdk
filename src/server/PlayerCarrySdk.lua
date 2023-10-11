@@ -6,8 +6,6 @@ local StartGui = game:GetService("StarterGui")
 local PLAYER_LEFT_THE_GAME_MESSAGE = "The player requested to carry has left the game."
 local STOPPING = true
 
-local isTesting = true
-
 local PlayerCarrySdk = {
 	pendingRequests = {},
 	playersActive = {},
@@ -121,11 +119,6 @@ local function characterRemoving(character)
 end
 
 local function playerAdded(player)
-	if isTesting then
-		local testUiClone = script.Parent.TestUi:Clone()
-		testUiClone.Parent = player:WaitForChild("PlayerGui")
-	end
-
 	PlayerCarrySdk.statePerPlayer[player] = "NONE"
 
 	player.CharacterRemoving:Connect(characterRemoving)
@@ -246,7 +239,7 @@ local function onStopCarry(player)
 
 	for index, players in PlayerCarrySdk.playersActive do
 		-- loop through players and find the matching table of players that are active
-		for key, value in players do
+		for _key, value in players do
 			if value == player then
 				players.playerToCarry.Character:FindFirstChild("CarryWeld"):Destroy()
 
@@ -297,6 +290,8 @@ function PlayerCarrySdk.init()
 	carrySignal.Name = "CarrySignal"
 	local requestSignal = Instance.new("BindableEvent", bindableEvents)
 	requestSignal.Name = "RequestSignal"
+	local playerCarryMenuActivated = Instance.new("BindableEvent", bindableEvents)
+	playerCarryMenuActivated.Name = "PlayerCarryMenuActivated"
 
 	-- bindable functons
 	local respondToCarry = Instance.new("BindableFunction", bindableFunctions)
