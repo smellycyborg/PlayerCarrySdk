@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
+local StartGui = game:GetService("StarterGui")
 
 local PLAYER_LEFT_THE_GAME_MESSAGE = "The player requested to carry has left the game."
 local STOPPING = true
@@ -264,6 +265,10 @@ function PlayerCarrySdk.init()
 	-- parenting client scripts
 	local ClientScripts = script.Parent.ClientScripts
 	ClientScripts.Parent = StarterPlayer.StarterPlayerScripts
+
+	-- parenting gui
+	local PlayerCarryMenu = script.Parent.PlayerCarryMenu
+	PlayerCarryMenu.Parent = StartGui
 	
 	-- folders
 	local remoteEvents = Instance.new("Folder", ReplicatedStorage)
