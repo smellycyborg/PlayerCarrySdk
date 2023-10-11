@@ -3,20 +3,21 @@ local Players = game:GetService("Players")
 
 local BindableEvents = ReplicatedStorage:WaitForChild("BindableEvents")
 
-local carrySignal = BindableEvents:WaitForChild("CarrySignal")
-
 local TEST_RESPONSE = true
 local TEST_CARRY = "SHOULDERS"
 
 local player = game.Players.LocalPlayer
+
+local isTesting = true
+if not isTesting then
+	return
+end
+
+local carrySignal = BindableEvents:WaitForChild("CarrySignal")
+
 local playerGui = player:WaitForChild("PlayerGui")
 local TestUi = playerGui:WaitForChild("TestUi")
 local scrollingFrame = TestUi:WaitForChild("ScrollingFrame")
-
-local notNeeded = true
-if notNeeded then
-	return
-end
 
 task.spawn(function()
 	while task.wait(5) do

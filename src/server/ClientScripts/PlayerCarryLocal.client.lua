@@ -1,8 +1,6 @@
-local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local StarterGui = game:GetService("StarterGui")
 
 local AnimationClass = require(script.Parent.AnimationClass)
 
@@ -90,11 +88,10 @@ local function onCarrySignal(playerToCarryName, carryType)
 	carryRequest:FireServer(playerToCarryName, carryType)
 end
 
-local function onPlayerCarryMenuActivated(otherPlayer)
-	local otherPlayerName = nil
+local function onPlayerCarryMenuActivated(otherPlayerName)
 	for _, plr in Players:GetPlayers() do
 		if plr.Name == otherPlayerName then
-			local otherCharacter = otherPlayer.Character
+			local otherCharacter = plr.Character
 			if not otherCharacter then
 				return warn("onPlayerCarryMenuActivated:  attempt to index nil with other character.")
 			end
@@ -118,7 +115,7 @@ local function onCarryButtonActivated(button)
 	carryRequest:FireServer(playerToCarryName, button.Name)
 
 	PlayerCarryMenu.Adornee = nil
-	
+
 end
 
 -- bindings

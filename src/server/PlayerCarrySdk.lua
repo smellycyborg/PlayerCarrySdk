@@ -6,6 +6,8 @@ local StartGui = game:GetService("StarterGui")
 local PLAYER_LEFT_THE_GAME_MESSAGE = "The player requested to carry has left the game."
 local STOPPING = true
 
+local isTesting = true
+
 local PlayerCarrySdk = {
 	pendingRequests = {},
 	playersActive = {},
@@ -24,7 +26,7 @@ local function _activateCarry(playerCarrying, playerToCarry, cFrame)
 	weld.Part1 = playerCarrying.Character.HumanoidRootPart
 	weld.Parent = playerToCarry.Character
 	
-	playerCarrying.Character.HumanoidRootPart:SetNetworkOwner(playerCarrying)
+	-- playerCarrying.Character.HumanoidRootPart:SetNetworkOwner(playerCarrying)
 end
 
 local carryTypes = {
@@ -262,6 +264,10 @@ function PlayerCarrySdk.init()
 	-- parenting gui
 	local PlayerCarryMenu = script.Parent.PlayerCarryMenu
 	PlayerCarryMenu.Parent = StartGui
+	if isTesting then
+		local TestUi = script.Parent.TestUi
+		TestUi.Parent = StartGui
+	end
 	
 	-- folders
 	local remoteEvents = Instance.new("Folder", ReplicatedStorage)
